@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<config>
+  <custom>
+    <paths>
+      <path name="Steam" value="C:\Program Files (x86)\Steam" />
+      <path name="Steam" value="C:\Program Files\Steam" />
+    </paths>
+  </custom>
+  <default>
+    <games>
+      <game name="Atom Zombie Smasher" path="%AppData%\AtomZombieData" />
+      <game name="Crazy Taxi (Steam)" path="$MyDocuments$\SEGA\Crazy Taxi" />
+      <game name="Eets" path="$Steam$\steamapps\common\Eets\User" />
+      <game name="Insanely Twisted Shadow Planet" path="%LOCALAPPDATA%\Insanely Twisted Shadow Planet" />
+      <game name="Lego Harry Potter" path="%AppData%\WB Games\LEGO® Harry Potter™\SavedGames" />
+      <game name="Puzzle World 2 (Steam)" path="$MyDocuments$\DIgital Games Factory\Puzzler World 2 Steam" />
+    </games>
+  </default>
+</config>

@@ -1,0 +1,6 @@
+*ncrunch*
+*.suo
+*.user
+bin
+obj
+packages/*/*
