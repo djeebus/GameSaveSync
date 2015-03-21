@@ -17,6 +17,14 @@ namespace GameSync
         void CreateHardLink(string existingPath, string newPath);
 
         bool DoFoldersPointToSameJunctionPoint(string path1, string path2);
+
+        bool DoFilesPointToSamePoint(string backupPath, string livePath);
+
+        void MoveFile(string livePath, string backupPath);
+
+        void CreateHardLinkForFiles(string backupPath, string livePath);
+
+        void MoveFolder(string livePath, string backupPath);
     }
 
     class FileService : IFileService
@@ -61,6 +69,26 @@ namespace GameSync
                 EnsureFolder(parent);
 
             Directory.CreateDirectory(folder);
+        }
+
+        public bool DoFilesPointToSamePoint(string backupPath, string livePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CreateHardLinkForFiles(string backupPath, string livePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void MoveFile(string livePath, string backupPath)
+        {
+            File.Move(livePath, backupPath);
+        }
+
+        public void MoveFolder(string livePath, string backupPath)
+        {
+            Directory.Move(livePath, backupPath);
         }
     }
 }

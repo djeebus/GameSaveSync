@@ -72,36 +72,74 @@ namespace GameSync
 
             var livePath = game.Path;
 
-            var backupExists = Directory.Exists(backupPath);
-            var liveExists = Directory.Exists(livePath);
+            if (AttemptBackupAsDirectory(game, backupPath, livePath))
+                return;
+            else if (AttemptBackupAsFile(game, backupPath, livePath))
+                return;
+        }
 
-            if (!backupExists && !liveExists)
-                return; // not reason to run this sync
+        private bool AttemptBackupAsFile(Folder game, string backupPath, string livePath)
+        {
+            var backupExistsAsFile = File.Exists(backupPath);
+            var liveExistsAsFile = File.Exists(livePath);
 
-            if (backupExists && liveExists)
+            if (!backupExistsAsFile && !liveExistsAsFile)
+                return false;
+
+            if (backupExistsAsFile && liveExistsAsFile)
+            {
+                if (this._fileService.DoFilesPointToSamePoint(backupPath, livePath))
+                    return true; // already set up
+
+                throw new ArgumentOutOfRangeException("livePath", livePath, "Please delete either the backup file or the live file");
+            }
+            else if (!liveExistsAsFile)
+            {
+                Console.Write("Linking '{0}' to backup path", game.Name);
+                this._fileService.CreateHardLink(backupPath, livePath);
+            }
+            else if (!backupExistsAsFile)
+            {
+                Console.WriteLine("Moving '{0}' to backup path", game.Name);
+                var path = Path.GetDirectoryName(backupPath);
+                _fileService.EnsureFolder(path);
+                _fileService.MoveFile(livePath, backupPath);
+
+                Console.WriteLine("Linking '{0}' to backup path", game.Name);
+                _fileService.CreateHardLinkForFiles(backupPath, livePath);
+            }
+        }
+
+        private bool AttemptBackupAsDirectory(Folder game, string backupPath, string livePath)
+        {
+            var backupExistsAsDirectory = Directory.Exists(backupPath);
+            var liveExistsAsDirectory = Directory.Exists(livePath);
+
+            if (!backupExistsAsDirectory && !liveExistsAsDirectory)
+                return false;
+
+            if (backupExistsAsDirectory && liveExistsAsDirectory)
             {
                 if (this._fileService.DoFoldersPointToSameJunctionPoint(livePath, backupPath))
-                    return; // already set up!
+                    return true; // already set up!
 
                 throw new ArgumentOutOfRangeException("livePath", livePath, "Please empty either the backup folder or the live folder");
             }
-
-            if (!liveExists)
+            else if (!liveExistsAsDirectory)
             {
                 Console.WriteLine("Linking '{0}' to backup path", game.Name);
                 this._fileService.CreateHardLink(backupPath, livePath);
-                return;
-            } 
-            
-            if (!backupExists)
+            }
+            else if (!backupExistsAsDirectory)
             {
                 Console.WriteLine("Moving '{0}' files to backup path", game.Name);
-                Directory.Move(livePath, backupPath);
+                this._fileService.MoveFolder(livePath, backupPath);
 
                 Console.WriteLine("Linking '{0}' to backup path", game.Name);
                 this._fileService.CreateHardLink(backupPath, livePath);
-                return;
             }
+
+            return true;
         }
     }
 }
